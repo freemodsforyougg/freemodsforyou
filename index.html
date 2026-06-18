@@ -36,7 +36,7 @@
 
     <div id="status" class="status-msg"></div>
 
-    <a href="https://gofile.io/d/vp4G2c" id="btn-final" class="btn btn-download" target="_blank">
+    <a href="https://gofile.io/d/M5Tx4e" id="btn-final" class="btn btn-download" target="_blank">
         3. ¡Descargar Archivo Ahora!
     </a>
 </div>
@@ -48,11 +48,9 @@
     // Al cargar la página, revisamos si el usuario ya entró antes
     window.onload = function() {
         if (localStorage.getItem("usuarioVerificado") === "true") {
-            // Si ya entró antes, le damos el beneficio de la duda y saltamos la restricción de hacer clic en YT
             dioClicEnYoutube = true;
             tiempoSuficiente = true; 
             
-            // Mostramos el mensaje de bienvenida recurrente
             document.getElementById('returning-user-msg').style.display = 'block';
             document.getElementById('main-instructions').innerText = "Presiona verificar para restablecer tu enlace de descarga.";
         }
@@ -60,7 +58,7 @@
 
     function usuarioClic() {
         dioClicEnYoutube = true;
-        // Ajusta aquí los segundos de espera (ej. 15000 son 15 segundos)
+        // 15000 milisegundos = 15 segundos de espera obligatoria
         setTimeout(() => {
             tiempoSuficiente = true;
         }, 15000); 
@@ -83,9 +81,7 @@
                 status.innerHTML = "<span class='error'>❌ Requisitos incompletos o tiempo de espera insuficiente. Asegúrate de interactuar con el video.</span>";
             } else {
                 status.innerHTML = "<span class='success'>✅ ¡Acceso concedido! Enlace desbloqueado.</span>";
-                btnFinal.style.display = 'block'; // Muestra el enlace
-                
-                // Guardamos en la memoria del navegador que este usuario ya cumplió los pasos
+                btnFinal.style.display = 'block'; 
                 localStorage.setItem("usuarioVerificado", "true");
             }
         }, 2000); 
