@@ -14,27 +14,29 @@
         .status-msg { margin: 15px 0; font-size: 14px; font-weight: bold; }
         .error { color: #dc3545; }
         .success { color: #28a745; }
+        .info { color: #0056b3; background-color: #e6f2ff; padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 13px; display: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>🔒 Enlace Protegido</h2>
-    <p>Completa las acciones en el video para desbloquear el check de verificación.</p>
     
-    <!-- PASO 1 -->
-    <a href="https://youtu.be/YQTHb6vlc4E?si=FKt5_xmfsxaPiCHQ" target="_blank" class="btn btn-yt" onclick="usuarioClic()外部">
+    <div id="returning-user-msg" class="info">
+        👋 ¡Hola de nuevo! Detectamos que ya completaste los pasos anteriormente. No es necesario volver a ver el video, solo dale al botón azul para re-validar.
+    </div>
+
+    <p id="main-instructions">Completa las acciones en el video para desbloquear el check de verificación.</p>
+    
+    <a href="https://youtu.be/YQTHb6vlc4E" target="_blank" id="btn-yt-action" class="btn btn-yt" onclick="usuarioClic()">
         1. Ir al Video (Suscribirse, Like y Comentar)
     </a>
 
-    <!-- PASO 2: El botón de Check -->
     <button class="btn btn-check" onclick="verificarPasos()">2. Verificar Pasos</button>
 
-    <!-- Mensajes de estado -->
     <div id="status" class="status-msg"></div>
 
-    <!-- PASO 3: Enlace final oculto -->
-    <a href="https://gofile.io/d/tTnjbh" id="btn-final" class="btn btn-download" target="_blank">
+    <a href="https://gofile.io/d/vp4G2c" id="btn-final" class="btn btn-download" target="_blank">
         3. ¡Descargar Archivo Ahora!
     </a>
 </div>
@@ -42,13 +44,26 @@
 <script>
     let dioClicEnYoutube = false;
     let tiempoSuficiente = false;
+    
+    // Al cargar la página, revisamos si el usuario ya entró antes
+    window.onload = function() {
+        if (localStorage.getItem("usuarioVerificado") === "true") {
+            // Si ya entró antes, le damos el beneficio de la duda y saltamos la restricción de hacer clic en YT
+            dioClicEnYoutube = true;
+            tiempoSuficiente = true; 
+            
+            // Mostramos el mensaje de bienvenida recurrente
+            document.getElementById('returning-user-msg').style.display = 'block';
+            document.getElementById('main-instructions').innerText = "Presiona verificar para restablecer tu enlace de descarga.";
+        }
+    };
 
     function usuarioClic() {
         dioClicEnYoutube = true;
-        // Simulamos que el proceso de suscripción/like toma al menos 12 segundos
+        // Ajusta aquí los segundos de espera (ej. 15000 son 15 segundos)
         setTimeout(() => {
             tiempoSuficiente = true;
-        }, 12000); 
+        }, 15000); 
     }
 
     function verificarPasos() {
@@ -60,17 +75,20 @@
             return;
         }
 
-        status.innerHTML = "🔄 Buscando en el sistema de YouTube...";
+        status.innerHTML = "🔄 Validando credenciales con YouTube...";
 
-        // Pequeño retraso de carga falsa para darle realismo
+        // Carga falsa de 2 segundos para dar realismo
         setTimeout(() => {
             if (!tiempoSuficiente) {
-                status.innerHTML = "<span class='error'>❌ Requisitos incompletos. Asegúrate de dar Like y comentar antes de verificar.</span>";
+                status.innerHTML = "<span class='error'>❌ Requisitos incompletos o tiempo de espera insuficiente. Asegúrate de interactuar con el video.</span>";
             } else {
-                status.innerHTML = "<span class='success'>✅ ¡Verificación exitosa! Requisitos detectados.</span>";
-                btnFinal.style.display = 'block'; // Muestra el enlace de descarga
+                status.innerHTML = "<span class='success'>✅ ¡Acceso concedido! Enlace desbloqueado.</span>";
+                btnFinal.style.display = 'block'; // Muestra el enlace
+                
+                // Guardamos en la memoria del navegador que este usuario ya cumplió los pasos
+                localStorage.setItem("usuarioVerificado", "true");
             }
-        }, 2000); // 2 segundos de "pantalla de carga" falsa
+        }, 2000); 
     }
 </script>
 
