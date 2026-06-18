@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación de Requisitos</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 100%; }
+        .btn { display: block; padding: 12px; margin: 10px 0; text-decoration: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .btn-yt { background-color: #ff0000; color: white; }
+        .btn-check { background-color: #007bff; color: white; border: none; width: 100%; font-size: 16px; }
+        .btn-download { background-color: #28a745; color: white; display: none; }
+        .status-msg { margin: 15px 0; font-size: 14px; font-weight: bold; }
+        .error { color: #dc3545; }
+        .success { color: #28a745; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🔒 Enlace Protegido</h2>
+    <p>Completa las acciones en el video para desbloquear el check de verificación.</p>
+    
+    <!-- PASO 1 -->
+    <a href="https://youtu.be/YQTHb6vlc4E?si=FKt5_xmfsxaPiCHQ" target="_blank" class="btn btn-yt" onclick="usuarioClic()外部">
+        1. Ir al Video (Suscribirse, Like y Comentar)
+    </a>
+
+    <!-- PASO 2: El botón de Check -->
+    <button class="btn btn-check" onclick="verificarPasos()">2. Verificar Pasos</button>
+
+    <!-- Mensajes de estado -->
+    <div id="status" class="status-msg"></div>
+
+    <!-- PASO 3: Enlace final oculto -->
+    <a href="https://gofile.io/d/tTnjbh" id="btn-final" class="btn btn-download" target="_blank">
+        3. ¡Descargar Archivo Ahora!
+    </a>
+</div>
+
+<script>
+    let dioClicEnYoutube = false;
+    let tiempoSuficiente = false;
+
+    function usuarioClic() {
+        dioClicEnYoutube = true;
+        // Simulamos que el proceso de suscripción/like toma al menos 12 segundos
+        setTimeout(() => {
+            tiempoSuficiente = true;
+        }, 12000); 
+    }
+
+    function verificarPasos() {
+        const status = document.getElementById('status');
+        const btnFinal = document.getElementById('btn-final');
+
+        if (!dioClicEnYoutube) {
+            status.innerHTML = "<span class='error'>❌ Primero debes hacer clic en el botón de YouTube.</span>";
+            return;
+        }
+
+        status.innerHTML = "🔄 Buscando en el sistema de YouTube...";
+
+        // Pequeño retraso de carga falsa para darle realismo
+        setTimeout(() => {
+            if (!tiempoSuficiente) {
+                status.innerHTML = "<span class='error'>❌ Requisitos incompletos. Asegúrate de dar Like y comentar antes de verificar.</span>";
+            } else {
+                status.innerHTML = "<span class='success'>✅ ¡Verificación exitosa! Requisitos detectados.</span>";
+                btnFinal.style.display = 'block'; // Muestra el enlace de descarga
+            }
+        }, 2000); // 2 segundos de "pantalla de carga" falsa
+    }
+</script>
+
+</body>
+</html>
