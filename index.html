@@ -3,88 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verificación de Requisitos</title>
+    <title>Desbloquear Enlace</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 100%; }
-        .btn { display: block; padding: 12px; margin: 10px 0; text-decoration: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background: white; padding: 35px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; max-width: 400px; width: 100%; box-sizing: border-box; }
+        h2 { color: #222; margin-top: 0; }
+        p { color: #555; font-size: 15px; line-height: 1.4; }
+        .btn { display: block; padding: 14px; margin: 20px 0 10px 0; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; transition: background 0.2s; }
         .btn-yt { background-color: #ff0000; color: white; }
-        .btn-check { background-color: #007bff; color: white; border: none; width: 100%; font-size: 16px; }
+        .btn-yt:hover { background-color: #d60000; }
         .btn-download { background-color: #28a745; color: white; display: none; }
-        .status-msg { margin: 15px 0; font-size: 14px; font-weight: bold; }
-        .error { color: #dc3545; }
-        .success { color: #28a745; }
-        .info { color: #0056b3; background-color: #e6f2ff; padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 13px; display: none; }
+        .btn-download:hover { background-color: #218838; }
+        .counter-box { display: none; background-color: #e6f2ff; color: #0056b3; padding: 15px; border-radius: 6px; font-weight: bold; margin: 20px 0 10px 0; font-size: 15px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>🔒 Enlace Protegido</h2>
+    <p id="instructions">Para acceder a la descarga, haz clic en el botón de abajo, suscríbete al canal, dale like y deja un comentario en el video.</p>
     
-    <div id="returning-user-msg" class="info">
-        👋 ¡Hola de nuevo! Detectamos que ya completaste los pasos anteriormente. No es necesario volver a ver el video, solo dale al botón azul para re-validar.
-    </div>
-
-    <p id="main-instructions">Completa las acciones en el video para desbloquear el check de verificación.</p>
-    
-    <a href="https://youtu.be/YQTHb6vlc4E" target="_blank" id="btn-yt-action" class="btn btn-yt" onclick="usuarioClic()">
-        1. Ir al Video (Suscribirse, Like y Comentar)
+    <a href="https://youtu.be/YQTHb6vlc4E" target="_blank" id="btn-yt" class="btn btn-yt" onclick="iniciarValidacion()">
+        1. Ir al Video y Cumplir Requisitos
     </a>
 
-    <button class="btn btn-check" onclick="verificarPasos()">2. Verificar Pasos</button>
+    <div id="counter" class="counter-box">
+        🔄 Validando requisitos... Espera <span id="seconds">30</span> segundos.
+    </div>
 
-    <div id="status" class="status-msg"></div>
-
-    <a href="https://gofile.io/d/M5Tx4e" id="btn-final" class="btn btn-download" target="_blank">
-        3. ¡Descargar Archivo Ahora!
+    <a href="https://gofile.io/d/M5Tx4e" id="btn-download" class="btn btn-download" target="_blank">
+        2. ¡Descargar Archivo Ahora!
     </a>
 </div>
 
 <script>
-    let dioClicEnYoutube = false;
-    let tiempoSuficiente = false;
-    
-    // Al cargar la página, revisamos si el usuario ya entró antes
+    // Al cargar la página, verificamos si el usuario ya hizo todo el proceso antes
     window.onload = function() {
-        if (localStorage.getItem("usuarioVerificado") === "true") {
-            dioClicEnYoutube = true;
-            tiempoSuficiente = true; 
-            
-            document.getElementById('returning-user-msg').style.display = 'block';
-            document.getElementById('main-instructions').innerText = "Presiona verificar para restablecer tu enlace de descarga.";
+        if (localStorage.getItem("enlaceDesbloqueado") === "true") {
+            mostrarBotonDescargaDirecta();
         }
     };
 
-    function usuarioClic() {
-        dioClicEnYoutube = true;
-        // 15000 milisegundos = 15 segundos de espera obligatoria
-        setTimeout(() => {
-            tiempoSuficiente = true;
-        }, 15000); 
+    function iniciarValidacion() {
+        // Si el usuario ya lo desbloqueó antes, no iniciamos el contador otra vez
+        if (localStorage.getItem("enlaceDesbloqueado") === "true") return;
+
+        const btnYt = document.getElementById('btn-yt');
+        const counterBox = document.getElementById('counter');
+        const secondsSpan = document.getElementById('seconds');
+        
+        // Ocultamos el botón de YouTube para que no se confunda y mostramos el contador
+        btnYt.style.display = 'none';
+        counterBox.style.display = 'block';
+        
+        let tiempo = 30; // Los 30 segundos que pediste
+
+        const cuentaRegresiva = setInterval(() => {
+            tiempo--;
+            secondsSpan.innerText = tiempo;
+
+            if (tiempo <= 0) {
+                clearInterval(cuentaRegresiva);
+                
+                // Guardamos en memoria que este usuario ya cumplió la espera
+                localStorage.setItem("enlaceDesbloqueado", "true");
+                
+                // Mostramos el botón final
+                counterBox.style.display = 'none';
+                document.getElementById('btn-download').style.display = 'block';
+                document.getElementById('instructions').innerText = "¡Verificación completada con éxito! Ya puedes descargar tu archivo.";
+            }
+        }, 1000);
     }
 
-    function verificarPasos() {
-        const status = document.getElementById('status');
-        const btnFinal = document.getElementById('btn-final');
-
-        if (!dioClicEnYoutube) {
-            status.innerHTML = "<span class='error'>❌ Primero debes hacer clic en el botón de YouTube.</span>";
-            return;
-        }
-
-        status.innerHTML = "🔄 Validando credenciales con YouTube...";
-
-        // Carga falsa de 2 segundos para dar realismo
-        setTimeout(() => {
-            if (!tiempoSuficiente) {
-                status.innerHTML = "<span class='error'>❌ Requisitos incompletos o tiempo de espera insuficiente. Asegúrate de interactuar con el video.</span>";
-            } else {
-                status.innerHTML = "<span class='success'>✅ ¡Acceso concedido! Enlace desbloqueado.</span>";
-                btnFinal.style.display = 'block'; 
-                localStorage.setItem("usuarioVerificado", "true");
-            }
-        }, 2000); 
+    function mostrarBotonDescargaDirecta() {
+        document.getElementById('btn-yt').style.display = 'none';
+        document.getElementById('btn-download').style.display = 'block';
+        document.getElementById('instructions').innerText = "👋 ¡Hola de nuevo! El sistema validó tu acceso anterior. Ya puedes descargar directamente.";
     }
 </script>
 
